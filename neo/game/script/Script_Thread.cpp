@@ -113,6 +113,10 @@ const idEventDef EV_Thread_DebugCircle( "debugCircle", "vvvfdf" );
 const idEventDef EV_Thread_DebugBounds( "debugBounds", "vvvf" );
 const idEventDef EV_Thread_DrawText( "drawText", "svfvdf" );
 const idEventDef EV_Thread_InfluenceActive( "influenceActive", NULL, 'd' );
+// GUI Overlay --->
+const idEventDef EV_Thread_DrawGUIOverlay( "drawGUIOverlay", "s" );
+const idEventDef EV_Thread_RemoveGUIOverlay( "removeGUIOverlay", NULL );
+// <---
 
 CLASS_DECLARATION( idClass, idThread )
 	EVENT( EV_Thread_Execute,				idThread::Event_Execute )
@@ -193,6 +197,10 @@ CLASS_DECLARATION( idClass, idThread )
 	EVENT( EV_Thread_DebugBounds,			idThread::Event_DebugBounds )
 	EVENT( EV_Thread_DrawText,				idThread::Event_DrawText )
 	EVENT( EV_Thread_InfluenceActive,		idThread::Event_InfluenceActive )
+	// GUI Overlay --->
+	EVENT( EV_Thread_DrawGUIOverlay,		idThread::Event_DrawGUIOverlay )
+	EVENT( EV_Thread_RemoveGUIOverlay,		idThread::Event_RemoveGUIOverlay )
+	// <---
 END_CLASS
 
 idThread			*idThread::currentThread = NULL;
@@ -1841,6 +1849,25 @@ void idThread::Event_InfluenceActive( void ) {
 		idThread::ReturnInt( false );
 	}
 }
+
+// GUI Overlay --->
+/*
+================
+idThread::Event_DrawGUIOverlay
+================
+*/
+void idThread::Event_DrawGUIOverlay( const char *gui ) {
+	gameLocal.GetLocalPlayer()->playerView.SetGUIOverlay( gui );
+}
+/*
+================
+idThread::Event_RemoveGUIOverlay
+================
+*/
+void idThread::Event_RemoveGUIOverlay( void ) {
+	gameLocal.GetLocalPlayer()->playerView.RemoveGUIOverlay();
+}
+// <---
 
 int idGameEditExt::ThreadGetNum(const idThread* thread) const
 {
