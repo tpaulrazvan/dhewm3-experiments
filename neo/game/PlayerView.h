@@ -91,6 +91,12 @@ public:
 	// temp for view testing
 	void				EnableBFGVision( bool b ) { bfgVision = b; };
 
+	// GUI Overlay --->
+	void				DrawGUIOverlay( void );
+	void				SetGUIOverlay( const char *gui ) { overlayName = gui; };
+	void				RemoveGUIOverlay( void ) { overlayName = NULL; };
+	// <---
+
 private:
 	void				SingleView( idUserInterface *hud, const renderView_t *view );
 	void				DoubleVision( idUserInterface *hud, const renderView_t *view, int offset );
@@ -129,6 +135,11 @@ private:
 
 	idPlayer *			player;
 	renderView_t		view;
+
+	// GUI Overlay --->
+	idUserInterface		*guiOverlay;
+	idStr				overlayName;
+	// <---
 };
 
 #endif /* !__GAME_PLAYERVIEW_H__ */

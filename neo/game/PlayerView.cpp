@@ -66,6 +66,11 @@ idPlayerView::idPlayerView() {
 	fadeColor.Zero();
 	shakeAng.Zero();
 
+	// GUI Overlay --->
+	guiOverlay = NULL;
+	overlayName = NULL;
+	// <---
+
 	ClearEffects();
 }
 
@@ -118,6 +123,11 @@ void idPlayerView::Save( idSaveGame *savefile ) const {
 
 	savefile->WriteObject( player );
 	savefile->WriteRenderView( view );
+
+	// GUI Overlay --->
+	savefile->WriteUserInterface( guiOverlay, false );
+	savefile->WriteString( overlayName );
+	// <---
 }
 
 /*
@@ -169,6 +179,11 @@ void idPlayerView::Restore( idRestoreGame *savefile ) {
 
 	savefile->ReadObject( reinterpret_cast<idClass *&>( player ) );
 	savefile->ReadRenderView( view );
+
+	// GUI Overlay --->
+	savefile->ReadUserInterface( guiOverlay );
+	savefile->ReadString( overlayName );
+	// <---
 }
 
 /*
@@ -197,6 +212,7 @@ void idPlayerView::ClearEffects() {
 
 	fadeTime = 0;
 	bfgVision = false;
+	overlayName = NULL;	// GUI Overlay
 }
 
 /*
@@ -455,6 +471,8 @@ void idPlayerView::SingleView( idUserInterface *hud, const renderView_t *view ) 
 
 	gameRenderWorld->RenderScene( &hackedView );
 
+	DrawGUIOverlay();	// GUI Overlay
+
 	if ( player->spectating ) {
 		return;
 	}
@@ -538,6 +556,33 @@ void idPlayerView::SingleView( idUserInterface *hud, const renderView_t *view ) 
 		}
 	}
 }
+
+
+// GUI Overlay --->
+/*
+===================
+idPlayerView::DrawGUIOverlay
+===================
+*/
+void idPlayerView::DrawGUIOverlay( void ) {
+	const char *guiName = overlayName;
+
+	if ( guiName == NULL ) {
+		return;
+	}
+
+	// we will set the overlayName from scripts
+	if ( guiName[0] ) {
+		guiOverlay = uiManager->FindGui( guiName );
+		if ( guiOverlay == NULL ) {
+			gameLocal.Warning( "GUI overlay %s not found.\n", guiName );
+			guiName = NULL;
+			return;
+		}
+		guiOverlay->Redraw( gameLocal.realClientTime );
+	}
+}
+// <---
 
 /*
 ===================
